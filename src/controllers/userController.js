@@ -8,8 +8,6 @@ module.exports = {
     addUser: async function(req, res){
         try {
             const user = new User(req.body);
-            //  console.log('~ user', user);
-
             // Utilizar bcrypt antes de atribuir la contraseña al usuario
             const salt = await bcrypt.genSalt(10);
             const encryptedPassword = await bcrypt.hash(user.password, salt);
@@ -28,10 +26,9 @@ module.exports = {
                 await user.save((err, savedInfo) => {
                 if(err) throw new Error('Error adding user', err);
 
-                res.status(200).json({
-                    message: 'Successfully added user',
-                    savedInfo
-                });
+                    res.status(200).json({
+                        message: 'Successfully added user'
+                    });
                 });
             }
            
@@ -47,9 +44,7 @@ module.exports = {
             const { id } = req.params;
             const selectedUser = await User.findById(id);
 
-            res.status(200).json({
-                selectedUser
-            });
+            res.status(200).json(selectedUser);
 
         } catch(error){
             res.status(500).json({
@@ -80,8 +75,7 @@ module.exports = {
                     if(err) throw new Error('Error updating user', err);
 
                     res.status(200).json({
-                        message: 'Successfully updated user',
-                        response
+                        message: 'Successfully updated user'
                     });
                 });
             }
@@ -112,7 +106,6 @@ module.exports = {
             }
             
         } catch (error) {
-           // console.log('Error', error);
             res.status(500).json({
                 message: 'Internal Server Error'
             });
@@ -122,8 +115,7 @@ module.exports = {
     userLogin: async function(req, res){
         try {
           const userInfo = req.body;
-          //  console.log('~ userInfo', userInfo);
-          
+
           // comprobar username
             const checkedData = await User.findOne({ username: userInfo.username });
             // console.log('~ checkedData', checkedData);
@@ -136,7 +128,6 @@ module.exports = {
 
           // comprobar password
             const checkedPassword = await bcrypt.compare(userInfo.password, checkedData.password);
-            // console.log('~ checkedPassword', checkedPassword);
 
             if(checkedPassword === false){
                 res.status(401).json({  
@@ -146,11 +137,10 @@ module.exports = {
             }
 
           // Si todo está OK, se genera el token para login
-            const token = jwt.sign( { username: checkedData.username, _id: checkedData._id}, process.env.SECRET, { expiresIn: 60*60*12 });
+            const token = jwt.sign({ username: checkedData.username, _id: checkedData._id}, process.env.SECRET, { expiresIn: 60*60*12 });
                         
             res.status(200).json({
-                message: 'Correct Login',
-                token
+                message: 'Correct Login'
             });
         } catch (error) {
            res.status(500).json({

@@ -11,15 +11,14 @@ module.exports = {
             
            product.name = product.name.toLowerCase();             
            await product.save(async(err, savedInfo) => {
-                            
+
                 if(err) throw new Error('Error adding product', err);
                 
                 await User.findByIdAndUpdate(`${product.userId}`, { $push: { productsList: savedInfo._id }});
                 await Category.findOneAndUpdate({_id: product.categoryId}, { $push: { productsList: savedInfo._id}});
                     
-                    res.status(200).json({
-                    message: 'Successfully added product',
-                    savedInfo
+                res.status(200).json({
+                    message: 'Successfully added product'
                 });   
             });
 
@@ -34,11 +33,8 @@ module.exports = {
         try {
             const { id } = req.params;
             const selectedProduct = await Product.findById( id );
-            console.log('~ selectedProduct', selectedProduct);
             
-            res.status(200).json({
-                selectedProduct
-            });
+            res.status(200).json(selectedProduct);
             
         } catch (error) {
             res.status(500).json({
@@ -50,11 +46,8 @@ module.exports = {
     getAllProducts: async (req, res) => {
         try {
             const listaProductos = await Product.find();
-            console.log('~ listaProductos', listaProductos);
 
-            res.status(200).json({
-                listaProductos
-            });
+            res.status(200).json(listaProductos);
 
         } catch (error) {
             res.status(500).json({
@@ -72,8 +65,7 @@ module.exports = {
                 if(err) throw new Error('Error updating product');
 
                 res.status(200).json({
-                    message: 'Successfuly updated product',
-                    response
+                    message: 'Successfuly updated product'
                 });
             });
 
@@ -104,20 +96,15 @@ module.exports = {
     },
 
     searchByName: async(req, res) => { 
-        
-        console.log('~ req.params', req.params);
         try {
             const { searchedProduct } = req.params;
             
             const listaTodosProductos = await Product.find();
             const selectedProducts = listaTodosProductos.filter( product => product.name.includes(searchedProduct.toLowerCase()));
                      
-            res.status(200).json({
-                selectedProducts
-            });
+            res.status(200).json(selectedProducts);
             
         }catch(error){
-            console.log('~ error', error);
             res.status(500).json({
                 message: 'Internal Server Error'
             });

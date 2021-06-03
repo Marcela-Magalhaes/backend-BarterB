@@ -7,15 +7,13 @@ module.exports = {
     addCategory: async (req, res) => { 
         try{
             const category = new Category(req.body);
-            console.log('~ category', category);
             
             await category.save((err, savedInfo) => {
-               // console.log('savedInfo', savedInfo);
+              
                 if(err) throw new Error('Error adding Category');
     
                 res.status(200).json({
-                    message: 'Successfully added category',
-                    savedInfo
+                    message: 'Successfully added category'
                 });
             });
         }catch(error){
@@ -29,9 +27,7 @@ module.exports = {
         try {
             const listaCategorias = await Category.find();
 
-            res.status(200).json({
-                listaCategorias
-            });
+            res.status(200).json(listaCategorias);
         } catch (error) {
             res.status(500).json({
                 message: 'Internal Server Error'
@@ -43,15 +39,13 @@ module.exports = {
         try {
             const { id } = req.params;
             await Category.findById( id, (err, selectedCategory) => {
-                // console.log('~ selectedCategory', selectedCategory);
+                
                 if(err) throw new Error('Error getting produtcs by category');
 
                 const productsByCategory = selectedCategory.productsList;
                 // console.log('~ productsByCategory', productsByCategory);
 
-                res.status(200).json({
-                    productsByCategory
-                });
+                res.status(200).json(productsByCategory);
             } );
 
         } catch (error) {
@@ -67,9 +61,7 @@ module.exports = {
             await Category.findById( id, (err, category) => {
                 if(err) throw new Error('Error getting category by id');
 
-                res.status(200).json({
-                    category
-                });
+                res.status(200).json(category);
             });
 
         } catch (error) {
@@ -88,8 +80,7 @@ module.exports = {
                 if(err) throw new Error('Error updating category');
 
                 res.status(200).json({
-                    message: 'Successfully updated category',
-                    response
+                    message: 'Successfully updated category'
                 });
             });          
 
