@@ -8,11 +8,10 @@ module.exports = {
     addproduct: async (req, res) => {
         try {
             const product = new Product(req.body);
-            // console.log('~ product ', product );
-                       
+            
+           product.name = product.name.toLowerCase();             
            await product.save(async(err, savedInfo) => {
-                // console.log('savedinfo', savedInfo); 
-                                
+                            
                 if(err) throw new Error('Error adding product', err);
                 
                 await User.findByIdAndUpdate(`${product.userId}`, { $push: { productsList: savedInfo._id }});
@@ -98,6 +97,27 @@ module.exports = {
             });
 
         } catch (error) {
+            res.status(500).json({
+                message: 'Internal Server Error'
+            });
+        }
+    },
+
+    searchByName: async(req, res) => { 
+        
+        console.log('~ req.params', req.params);
+        try {
+            const { searchedProduct } = req.params;
+            
+            const listaTodosProductos = await Product.find();
+            const selectedProducts = listaTodosProductos.filter( product => product.name.includes(searchedProduct.toLowerCase()));
+                     
+            res.status(200).json({
+                selectedProducts
+            });
+            
+        }catch(error){
+            console.log('~ error', error);
             res.status(500).json({
                 message: 'Internal Server Error'
             });
