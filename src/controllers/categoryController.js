@@ -37,17 +37,12 @@ module.exports = {
 
     getProductsByCategory: async (req, res) => {
         try {
-            const { id } = req.params;
-            await Category.findById( id, (err, selectedCategory) => {
-                
-                if(err) throw new Error('Error getting produtcs by category');
-
-                const productsByCategory = selectedCategory.productsList;
-                // console.log('~ productsByCategory', productsByCategory);
-
-                res.status(200).json(productsByCategory);
-            } );
-
+            const { categoryName } = req.params;
+            const selectedCategory = await Category.find({name: categoryName});
+            const productsIdByCategory = selectedCategory[0].productsList; 
+            
+            res.status(200).json(productsIdByCategory);
+            
         } catch (error) {
             res.status(500).json({
                 message: 'Internal Server Error'
