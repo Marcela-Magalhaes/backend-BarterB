@@ -64,9 +64,7 @@ module.exports = {
             await Product.findByIdAndUpdate(id, productInfo, { new: true }, (err, response) => {
                 if(err) throw new Error('Error updating product');
 
-                res.status(200).json({
-                    message: 'Successfuly updated product'
-                });
+                res.status(200).send('Successfuly updated product');
             });
 
         } catch (error) {
@@ -80,9 +78,10 @@ module.exports = {
         try {
             const { id } = req.params;
 
-            await Product.deleteOne({ _id: id }, (err) =>{
-                if(err) throw new Error('Error deleting product', err);
-            });
+            await Product.deleteOne({ _id: id });
+
+            await Category.findOneAndUpdate({ "productsList": id }, { "$pull": { "productsList": id }});
+            await User.findOneAndUpdate({ "productsList": id }, { "$pull": { "productsList": id }});
 
             res.status(200).json({
                 message: 'Successfully deleted product'

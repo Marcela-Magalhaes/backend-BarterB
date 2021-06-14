@@ -13,13 +13,13 @@ module.exports = {
             const encryptedPassword = await bcrypt.hash(user.password, salt);
             user.password = encryptedPassword;
 
+            user.imgUrl = `http://localhost:3000/${user.imgUrl}`;
+
             //Verificar si ya existe el username antes de guardarlo en la BBDD
             const searchUsername = await User.find({username: user.username });
            
             if(searchUsername[0]) {
-                res.status(200).json({
-                    message: "This username is not available"
-                });
+                res.status(200).send("This username is not available");
                 
             } else {
                 // Guardar el usuario en la BBDD
@@ -44,7 +44,7 @@ module.exports = {
             const { id } = req.params;
             const selectedUser = await User.findById(id);
 
-            res.status(200).json(selectedUser);
+            res.status(200).send(selectedUser);
 
         } catch(error){
             res.status(500).json({
